@@ -1,0 +1,22 @@
+sudo: required
+services:
+    - docker
+
+before_install:
+    - docker build -t blackflagbaby/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+    - docker run -e CI=true blackflagbaby/react-test npm test
+
+after_success:
+    - docker build -t blackflagbaby/multi-client ./client
+    - docker build -t blackflagbaby/multi-nginx ./nginx
+    - docker build -t blackflagbaby/multi-server ./server
+    - docker build -t blackflagbaby/multi-worker ./worker
+    #Log in to docker CLI
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+    #Take those images abd push them to docker hub
+    - docker push blackflagbaby/multi-client
+    - docker push blackflagbaby/multi-nginx
+    - docker push blackflagbaby/multi-server
+    - docker push blackflagbaby/multi-worker
