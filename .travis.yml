@@ -24,7 +24,6 @@ after_success:
     - docker push blackflagbaby/multi-worker
 
 deploy:
-    edge: true
     povider: elasticbeanstalk
     region: us-east-2
     app: multi-docker
